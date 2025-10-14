@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: backend
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/linkly_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: admin
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+  
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+  
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+  
+  web:
+    resources:
+      add-mappings: true
+
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-stacktrace: on_param
+
+# JWT Configuration
+app:
+  jwt:
+    secret: mySecretKeyForJWTTokenGenerationThatIsAtLeast256BitsLongForHS256Algorithm
+    expiration: 86400000  # 24 hours in milliseconds
+
+# Logging
+logging:
+  level:
+    com.example.backend: DEBUG
+    org.springframework.security: DEBUG
+
+    spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+      file-size-threshold: 2KB
+
+# File upload configuration
+file:
+  upload-dir: uploads
+  max-size: 10485760  # 10MB in bytes
