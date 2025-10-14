@@ -143,18 +143,18 @@ public class PostServiceImpl implements PostService {
         return postMapper.toResponse(updatedPost, likeCount, commentCount, isLiked);
     }
     
-    @Override
-    @Transactional(readOnly = true)
-    public Page<PostResponse> searchPosts(String keyword, Long currentUserId, Pageable pageable) {
-        Page<Post> posts = postRepository.findByCaptionContainingIgnoreCaseOrderByCreatedAtDesc(keyword, pageable);
+@Override
+@Transactional(readOnly = true)
+public Page<PostResponse> searchPosts(String keyword, Long currentUserId, Pageable pageable) {
+    Page<Post> posts = postRepository.searchByCaption(keyword, pageable);  // ← ĐỔI TÊN METHOD
+    
+    return posts.map(post -> {
+        Long likeCount = likeRepository.countByPostId(post.getId());
+        Long commentCount = commentRepository.countByPostId(post.getId());
+        Boolean isLiked = currentUserId != null && 
+                likeRepository.existsByUserIdAndPostId(currentUserId, post.getId());
         
-        return posts.map(post -> {
-            Long likeCount = likeRepository.countByPostId(post.getId());
-            Long commentCount = commentRepository.countByPostId(post.getId());
-            Boolean isLiked = currentUserId != null && 
-                    likeRepository.existsByUserIdAndPostId(currentUserId, post.getId());
-            
-            return postMapper.toResponse(post, likeCount, commentCount, isLiked);
-        });
-    }
+        return postMapper.toResponse(post, likeCount, commentCount, isLiked);
+    });
+}
 }

@@ -23,5 +23,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Long countByUserId(Long userId);
     
     // Tìm bài post theo caption
-    Page<Post> findByCaptionContainingIgnoreCaseOrderByCreatedAtDesc(String keyword, Pageable pageable);
+    @Query("SELECT p FROM Post p WHERE LOWER(p.caption) LIKE LOWER(CONCAT('%', :keyword, '%')) ORDER BY p.createdAt DESC")
+    Page<Post> searchByCaption(@Param("keyword") String keyword, Pageable pageable);
 }

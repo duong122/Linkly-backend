@@ -1,32 +1,36 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+/**
+ * Entity đại diện cho mối quan hệ follow giữa các users
+ * Sử dụng composite key: follower_id + following_id
+ */
 @Entity
 @Table(name = "followers")
-@Data
+@IdClass(FollowerId.class)
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@IdClass(FollowerId.class)
+@Builder
 public class Follower {
-    
+
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "follower_id", nullable = false)
-    private User follower;
-    
+    private User follower; // User đang follow
+
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "following_id", nullable = false)
-    private User following;
-    
+    private User following; // User được follow
+
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }

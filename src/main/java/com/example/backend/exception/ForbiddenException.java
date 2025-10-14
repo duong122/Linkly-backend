@@ -15,3 +15,4 @@ public class ForbiddenException extends RuntimeException {
         super(message, cause);
     }
 }
+
