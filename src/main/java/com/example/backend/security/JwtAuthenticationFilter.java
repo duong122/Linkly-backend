@@ -14,6 +14,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+
 import java.io.IOException;
 
 @Component
@@ -29,6 +34,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
             String jwt = getJwtFromRequest(request);
+
+                    // THÊM LOG NÀY
+        System.out.println("========== JWT DEBUG ==========");
+        System.out.println("JWT from request: [" + jwt + "]");
+        System.out.println("JWT length: " + (jwt != null ? jwt.length() : "null"));
+        System.out.println("================================");
             
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 Long userId = tokenProvider.getUserIdFromJWT(jwt);
@@ -48,10 +59,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
     
     private String getJwtFromRequest(HttpServletRequest request) {
+
         String bearerToken = request.getHeader("Authorization");
+
+         // THÊM LOG
+        System.out.println("Authorization Header: [" + bearerToken + "]");
+
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;
     }
+
 }
